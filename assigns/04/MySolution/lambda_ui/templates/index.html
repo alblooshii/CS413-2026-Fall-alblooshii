@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LAMBDA Workbench</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <h1>LAMBDA Workbench</h1>
+    <p>Enter a <code>d0exp</code> constructor expression, then lint or interpret it.</p>
+  </header>
+
+  <main>
+    <section aria-labelledby="load-heading">
+      <h2 id="load-heading">Load source</h2>
+      <div class="row" role="group" aria-labelledby="load-heading">
+        <button type="button" id="load-file">Choose File</button>
+        <button type="button" id="load-manual">Manual input</button>
+        <button type="button" id="load-factorial" data-key="factorial">Factorial (canned)</button>
+        <button type="button" id="load-fibonacci" data-key="fibonacci">Fibonacci (canned)</button>
+        <input type="file" id="file-input" hidden aria-label="Choose a UTF-8 text file">
+      </div>
+    </section>
+
+    <section aria-labelledby="editor-heading">
+      <h2 id="editor-heading">Source</h2>
+      <p id="source-label" class="source-label">No source applied yet</p>
+      <label for="editor">Editor (a single constructor expression; <code>#</code> starts a comment)</label>
+      <textarea id="editor" rows="14" spellcheck="false" autocomplete="off"
+                autocapitalize="off" wrap="off"></textarea>
+      <div class="row">
+        <button type="button" id="apply">Apply changes</button>
+        <button type="button" id="discard">Discard changes</button>
+      </div>
+    </section>
+
+    <section aria-labelledby="actions-heading">
+      <h2 id="actions-heading">Actions</h2>
+      <div class="row" id="actions" role="group" aria-labelledby="actions-heading"></div>
+      <p id="execute-help" class="hint"></p>
+    </section>
+
+    <section aria-labelledby="status-heading">
+      <h2 id="status-heading">Status</h2>
+      <p id="status" role="status" aria-live="polite"></p>
+      <p id="notice" role="alert" class="notice" hidden></p>
+    </section>
+
+    <section aria-labelledby="results-heading">
+      <h2 id="results-heading">Results</h2>
+      <p id="no-results" class="hint">No results for this revision yet.</p>
+      <div id="results"></div>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

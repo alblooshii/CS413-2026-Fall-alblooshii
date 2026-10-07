@@ -1,0 +1,18 @@
+body { font-family: system-ui, sans-serif; max-width: 52rem; margin: 0 auto; padding: 1rem; line-height: 1.4; color: #1a1a1a; background: #fff; }
+h1 { margin-bottom: .2rem; }
+h2 { font-size: 1.1rem; margin: 1.2rem 0 .4rem; }
+.row { display: flex; flex-wrap: wrap; gap: .5rem; margin: .4rem 0; }
+button { font: inherit; padding: .4rem .8rem; border: 2px solid #333; border-radius: 4px; background: #f3f3f3; cursor: pointer; }
+button:focus-visible, textarea:focus-visible { outline: 3px solid #0050c8; outline-offset: 2px; }
+button:disabled { color: #666; border-style: dashed; background: #fafafa; cursor: not-allowed; }
+textarea { width: 100%; box-sizing: border-box; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .95rem; padding: .5rem; border: 2px solid #333; }
+textarea[readonly] { background: #eee; }
+label { display: block; margin-bottom: .2rem; }
+.source-label { font-weight: bold; margin: 0 0 .4rem; }
+.hint { color: #444; font-size: .9rem; margin: .3rem 0; }
+.notice { border: 2px solid #333; padding: .4rem .6rem; margin: .4rem 0; }
+.notice.error { border-style: double; border-width: 4px; }
+article { border: 2px solid #333; margin: .6rem 0; }
+article.bad { border-style: double; border-width: 4px; }
+article h3 { margin: 0; padding: .3rem .6rem; font-size: 1rem; background: #eee; }
+article pre { margin: 0; padding: .5rem .6rem; white-space: pre-wrap; overflow-wrap: anywhere; font-family: ui-monospace, Menlo, Consolas, monospace; }
