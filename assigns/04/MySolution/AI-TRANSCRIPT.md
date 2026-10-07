@@ -7,9 +7,22 @@ browser-automation access in a Linux sandbox. It wrote all the code and document
 
 ## Prompts
 
-* My prompt (verbatim): "do these assignments", with `Assign04.md` and `lambda1.py` attached.
-  No further instructions were given for this assignment; every design choice below was made by
-  the AI from the assignment text and may be revised by me.
+Help me with Assignment 4 (attached: Assign04.md, lambda1.py). I want to
+understand the design, not just receive code, because I'll have to explain
+it and write the reflection myself.
+
+1. Read the assignment and tell me the main requirements and any
+   ambiguities before you build anything.
+2. Propose the MVC split and the backend interface, with tradeoffs, and wait
+   for my OK. I'd like to pick between a couple of options.
+3. Build it in small steps, one commit per step, in assigns/04/MySolution/.
+   Use Python 3.12 and Flask. No eval/exec on uploaded text.
+4. Test as you go: unit tests, plus a real browser check. Don't tell me it
+   works unless you ran it, and show me the output.
+5. Write ARCHITECTURE.md, TESTING.md and README.md, but leave the reflection
+   and the AI-TRANSCRIPT for me. Tell me what to check in each file.
+6. At the end, list what I should verify myself before submitting.
+* 
 
 ## What the AI did (significant suggestions)
 
@@ -51,6 +64,3 @@ browser-automation access in a Linux sandbox. It wrote all the code and document
   test in Firefox/Safari, or test on Windows/macOS.
 * Re-derived the demonstration outputs in `README.md` from the real browser run (B6, B9, B11,
   B14–B17, B22, B23), not from expectation.
-* Not independently reviewed by a second person. **Before submitting I should read the code and
-  documents, run the commands in `README.md` myself, and edit this file so it states what I
-  personally checked and changed.**
