@@ -1,0 +1,2 @@
+# The open expression above, closed with a let binding: Lint passes.
+D0Elet("x", D0Eint(1), D0Evar("x"))

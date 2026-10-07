@@ -1,0 +1,2 @@
+# HTML-like text must be shown literally, never as markup.
+D0Evar("<b>bold</b><script>alert(1)</script>")

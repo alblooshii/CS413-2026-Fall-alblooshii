@@ -1,0 +1,2 @@
+# Open expression: Lint reports the undeclared variable x.
+D0Evar("x")
