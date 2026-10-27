@@ -171,3 +171,5 @@ evaluator).
   invalid untyped encoding, and a sufficiently adversarial non-boolean or
   non-numeral value could in principle alpha-reduce to something that
   coincidentally matches the expected shape.
+
+  Link to video: https://streamable.com/pc87n5
