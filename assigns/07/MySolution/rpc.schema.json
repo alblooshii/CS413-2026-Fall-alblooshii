@@ -1,0 +1,257 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/assign07/rpc.schema.json",
+  "title": "LAMBDA3 JSON-RPC 2.0 service: HTTP payloads for POST /rpc",
+  "description": "Use #/$defs/requestBody for what a client POSTs and #/$defs/responseBody for what the server returns with HTTP 200. A 204 response has no body, so no schema applies.",
+  "$defs": {
+    "id": {
+      "description": "String, number or null. Booleans, objects and arrays are invalid. Integers are recommended.",
+      "type": ["string", "number", "null"]
+    },
+    "params": {
+      "description": "Envelope level: params, when present, must be structured (object or array). Every method here additionally requires an object (see the per-method definitions).",
+      "type": ["object", "array"]
+    },
+
+    "request": {
+      "description": "One call (has id) or one notification (no id member). Extra members are ignored.",
+      "type": "object",
+      "required": ["jsonrpc", "method"],
+      "properties": {
+        "jsonrpc": { "const": "2.0" },
+        "method": { "type": "string" },
+        "params": { "$ref": "#/$defs/params" },
+        "id": { "$ref": "#/$defs/id" }
+      }
+    },
+    "batchRequest": {
+      "description": "Nonempty array, at most 10 items. Items are validated one by one by the server, so a malformed item does not make the array itself invalid.",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10
+    },
+    "requestBody": {
+      "oneOf": [
+        { "$ref": "#/$defs/request" },
+        { "$ref": "#/$defs/batchRequest" }
+      ]
+    },
+
+    "healthParams": {
+      "type": "object",
+      "maxProperties": 0
+    },
+    "sourceParams": {
+      "type": "object",
+      "required": ["source"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000,
+          "pattern": "\\S",
+          "description": "LAMBDA3 source text. At most 10000 characters and not blank."
+        }
+      },
+      "additionalProperties": false
+    },
+    "compileParams": {
+      "type": "object",
+      "required": ["source", "target"],
+      "properties": {
+        "source": { "$ref": "#/$defs/sourceParams/properties/source" },
+        "target": { "enum": ["python", "javascript"] }
+      },
+      "additionalProperties": false
+    },
+
+    "methodCall": {
+      "description": "Constraint on method + params for the four defined methods. Unknown methods are answered with -32601 and are therefore not described here.",
+      "oneOf": [
+        {
+          "properties": {
+            "method": { "const": "service.health" },
+            "params": { "$ref": "#/$defs/healthParams" }
+          }
+        },
+        {
+          "required": ["params"],
+          "properties": {
+            "method": { "enum": ["lambda.typecheck", "lambda.interpret"] },
+            "params": { "$ref": "#/$defs/sourceParams" }
+          }
+        },
+        {
+          "required": ["params"],
+          "properties": {
+            "method": { "const": "lambda.compile" },
+            "params": { "$ref": "#/$defs/compileParams" }
+          }
+        }
+      ]
+    },
+
+    "healthResult": {
+      "type": "object",
+      "required": ["status", "version"],
+      "properties": {
+        "status": { "const": "ok" },
+        "version": { "const": "1.0" }
+      },
+      "additionalProperties": false
+    },
+    "typecheckResult": {
+      "type": "object",
+      "required": ["type"],
+      "properties": { "type": { "type": "string", "description": "format_type output, e.g. sint, (sint, bool), sint -> sint." } },
+      "additionalProperties": false
+    },
+    "interpretResult": {
+      "type": "object",
+      "required": ["type", "value"],
+      "properties": {
+        "type": { "type": "string" },
+        "value": { "type": "string", "description": "d0val_format output, always a string, e.g. \"42\", \"(1, true)\", \"<lam>\"." }
+      },
+      "additionalProperties": false
+    },
+    "compileResult": {
+      "type": "object",
+      "required": ["target", "code"],
+      "properties": {
+        "target": { "enum": ["python", "javascript"] },
+        "code": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+
+    "errorObject": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "type": "integer" },
+        "message": { "type": "string" },
+        "data": { "type": "object" }
+      },
+      "oneOf": [
+        { "properties": { "code": { "const": -32700 }, "data": { "$ref": "#/$defs/dataParseError" } } },
+        { "properties": { "code": { "const": -32600 }, "data": { "$ref": "#/$defs/dataInvalidRequest" } } },
+        { "properties": { "code": { "const": -32601 } } },
+        { "properties": { "code": { "const": -32602 }, "data": { "$ref": "#/$defs/dataInvalidParams" } } },
+        { "properties": { "code": { "const": -32603 } } },
+        { "properties": { "code": { "const": -32010 }, "data": { "$ref": "#/$defs/dataSyntaxError" } } },
+        { "properties": { "code": { "const": -32011 }, "data": { "$ref": "#/$defs/dataTypeError" } } },
+        { "properties": { "code": { "const": -32012 }, "data": { "$ref": "#/$defs/dataTimeout" } } },
+        { "properties": { "code": { "const": -32013 }, "data": { "$ref": "#/$defs/dataRuntimeError" } } }
+      ]
+    },
+
+    "dataParseError": {
+      "type": "object",
+      "required": ["reason"],
+      "properties": { "reason": { "enum": ["invalid_json", "invalid_utf8"] } }
+    },
+    "dataInvalidRequest": {
+      "type": "object",
+      "required": ["reason"],
+      "properties": {
+        "reason": {
+          "enum": ["empty_batch", "batch_too_large", "not_an_object", "bad_jsonrpc_version", "bad_method", "bad_id", "bad_params_type"]
+        }
+      }
+    },
+    "dataInvalidParams": {
+      "type": "object",
+      "required": ["reason"],
+      "properties": {
+        "reason": {
+          "enum": ["params_must_be_object", "missing_param", "wrong_type", "blank", "too_long", "invalid_value", "unexpected_param", "invalid_unicode"]
+        },
+        "param": { "type": "string" },
+        "max_length": { "type": "integer" },
+        "allowed": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "dataSyntaxError": {
+      "type": "object",
+      "required": ["kind", "detail", "line", "column", "text"],
+      "properties": {
+        "kind": { "const": "syntax_error" },
+        "detail": { "type": "string" },
+        "line": { "type": "integer", "minimum": 1 },
+        "column": { "type": "integer", "minimum": 1 },
+        "text": { "type": "string", "description": "The offending source line." }
+      }
+    },
+    "dataTypeError": {
+      "type": "object",
+      "required": ["kind", "detail"],
+      "properties": {
+        "kind": { "const": "type_error" },
+        "detail": { "type": "string" }
+      }
+    },
+    "dataTimeout": {
+      "type": "object",
+      "required": ["kind", "limit_seconds"],
+      "properties": {
+        "kind": { "const": "timeout" },
+        "limit_seconds": { "type": "number" }
+      }
+    },
+    "dataRuntimeError": {
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "enum": ["division_by_zero", "recursion_limit", "index_out_of_range", "invalid_operation", "memory_limit"]
+        }
+      }
+    },
+
+    "successResponse": {
+      "type": "object",
+      "required": ["jsonrpc", "id", "result"],
+      "properties": {
+        "jsonrpc": { "const": "2.0" },
+        "id": { "$ref": "#/$defs/id" },
+        "result": {
+          "oneOf": [
+            { "$ref": "#/$defs/healthResult" },
+            { "$ref": "#/$defs/typecheckResult" },
+            { "$ref": "#/$defs/interpretResult" },
+            { "$ref": "#/$defs/compileResult" }
+          ]
+        }
+      },
+      "not": { "required": ["error"] },
+      "additionalProperties": false
+    },
+    "errorResponse": {
+      "type": "object",
+      "required": ["jsonrpc", "id", "error"],
+      "properties": {
+        "jsonrpc": { "const": "2.0" },
+        "id": { "$ref": "#/$defs/id" },
+        "error": { "$ref": "#/$defs/errorObject" }
+      },
+      "not": { "required": ["result"] },
+      "additionalProperties": false
+    },
+    "response": {
+      "oneOf": [
+        { "$ref": "#/$defs/successResponse" },
+        { "$ref": "#/$defs/errorResponse" }
+      ]
+    },
+    "responseBody": {
+      "oneOf": [
+        { "$ref": "#/$defs/response" },
+        { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/response" } }
+      ]
+    }
+  },
+  "oneOf": [
+    { "$ref": "#/$defs/requestBody" }
+  ]
+}
